@@ -60,6 +60,7 @@ function cnv:action(x, y)
   gl.LoadIdentity()              -- Reset The Current Modelview Matrix
   
   -- harvest draw function
+  update()
   draw()
 
   iup.GLSwapBuffers(self)

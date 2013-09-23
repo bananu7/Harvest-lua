@@ -31,15 +31,10 @@ function drawCircle(point, radius, color)
     gl.End()
 end
 
-function distance (x1,y1,x2,y2) 
-	local x = x2-x1
-	local y = y2-y1
-	return math.sqrt(x*x + y*y)
-end
-
 -- harvest game logic
 Actor = {
     id = nil,
+	energy = 0,
     position = Point(0,0),
     kind = "actor", -- turret, rock, plant
 }
@@ -54,6 +49,7 @@ function Actor:new(o)
     lastActorId = lastActorId + 1
     return o
 end
+function Actor:update() end
 
 ---------------------
 -- Actual game logic
@@ -62,13 +58,18 @@ objects = { }
 clickmode = 'idle' -- 'build_turret' etc.
 
 function update()
-    for _,object in ipairs(objects) do
+    for _,object in pairs(objects) do
         object:update()
+    end
+    for _,object in pairs(objects) do
+       	if object.flaggedForDeletion then
+			objects[_] = nil
+		end
     end
 end
 
 function draw()
-    for _,object in ipairs(objects) do
+    for _,object in pairs(objects) do
         object:draw()
     end
 end
@@ -97,6 +98,31 @@ function keyboard_callback(key)
 	if key == iup.K_r then clickmode = 'build_harvester' end
 	if key == iup.K_s then clickmode = 'build_solarplant' end
 	if key == iup.K_e then clickmode = 'build_energylink' end
+end
+
+function query(location, range, idFilter, kindFilter) 
+	local function icontains(table, elem)
+		for k,v in ipairs(table) do
+			if v == elem then
+				return true
+			end
+		end
+		return false
+	end
+
+	kindFilter = kindFilter or { }
+
+	local result = { }
+	for _,object in pairs(objects) do
+		if distance(object.position, location) <= range then
+			if object.id ~= i then
+				if icontains(kindFilter, object.kind) then
+					table.insert(result, object)
+				end
+			end
+		end
+	end
+	return result
 end
 
 
