@@ -26,7 +26,7 @@ LightPosition = {0, 0, 2, 1}         -- Light Position ( NEW )
 filter = 1                           -- Which Filter To Use
 texture = 0                          -- Storage for the textures
 
-cnv = iup.glcanvas{buffer="DOUBLE", rastersize = "640x480"}
+cnv = iup.glcanvas{buffer="DOUBLE", rastersize = "800x600"}
 
 timer = iup.timer{time=10}
 
@@ -54,6 +54,7 @@ end
 
 function cnv:action(x, y)
   iup.GLMakeCurrent(self)
+  gl.ClearColor(30/255,30/255,30/255,1)
   gl.Clear('COLOR_BUFFER_BIT,DEPTH_BUFFER_BIT') -- Clear Screen And Depth Buffer
   
   gl.LoadIdentity()              -- Reset The Current Modelview Matrix
@@ -65,14 +66,13 @@ function cnv:action(x, y)
 end              
 
 function cnv:button_cb(but, pressed, x, y, status)
-    if but == iup.BUTTON3 and pressed then
-        return iup.CLOSE
-    end
+	mouse_callback(but, pressed, x, y, status)
 end
 
 function cnv:k_any(c)
   if c == iup.K_q or c == iup.K_ESC then
     return iup.CLOSE
+	
   end
   
   if c == iup.K_F1 then
@@ -85,23 +85,8 @@ function cnv:k_any(c)
     end
     iup.SetFocus(cnv)
   end
-  
-  if c == iup.K_f then   -- 'F' Key Being Pressed ?
-    filter = filter + 1
-    if filter > 3 then
-      filter = 1
-    end    
-  end
 
-  if c == iup.K_PGUP then  z = z - 2 end   -- Is Page Up Being Pressed? If So, Move Into The Screen.
-  if c == iup.K_PGDN then  z = z + 2 end   -- Is Page Down Being Pressed? If So, Move Towards The Viewer.
-
-  if c == iup.K_UP then  xspeed = xspeed - 0.01 end -- Is Up Arrow Being Pressed? If So, Decrease xspeed.
-  if c == iup.K_DOWN then  xspeed = xspeed + 0.01 end -- Is Down Arrow Being Pressed? If So, Increase xspeed.
-
-  if c == iup.K_LEFT then  yspeed = yspeed - 0.01 end -- Is Left Arrow Being Pressed? If So, Decrease yspeed.
-  if c == iup.K_RIGHT then  yspeed = yspeed + 0.01 end -- Is Right Arrow Being Pressed? If So, Increase yspeed.
-  
+  keyboard_callback(c)
 end
 
 --[[function LoadTexture(fileName)
@@ -174,6 +159,15 @@ dlg:show()
 cnv.rastersize = nil -- reset minimum limitation
 timer.run = "YES"
 
-if (not iup.MainLoopLevel or iup.MainLoopLevel()==0) then
-  iup.MainLoop()
+function kvprint(x)
+	for k,v in pairs(x) do
+		print(k,v)
+	end
 end
+
+function start()
+	if (not iup.MainLoopLevel or iup.MainLoopLevel()==0) then
+  		iup.MainLoop()
+	end
+end
+start()

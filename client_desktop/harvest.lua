@@ -1,3 +1,4 @@
+require "point"
 
 -- drawing functions
 function drawSquare(point, size, color)
@@ -30,11 +31,17 @@ function drawCircle(point, radius, color)
     gl.End()
 end
 
+function distance (x1,y1,x2,y2) 
+	local x = x2-x1
+	local y = y2-y1
+	return math.sqrt(x*x + y*y)
+end
+
 -- harvest game logic
 Actor = {
     id = nil,
-    x = 0, y = 0,
-    kind = nil, -- turret, rock, plant
+    position = Point(0,0),
+    kind = "actor", -- turret, rock, plant
 }
 lastActorId = 1
 function Actor:new(o)
@@ -43,22 +50,16 @@ function Actor:new(o)
     self.__index = self
     
     o.id = lastActorId
+	o.position = Point(0,0)
     lastActorId = lastActorId + 1
     return o
 end
 
-Rock = { }
-function Rock:new(o)
-    o = Actor:new(o)
-    o.draw = function(self)
-        --drawSquare({x = self.x, y = self.y}, 5, {r=128,g=128,b=128})
-        drawCircle({x = self.x, y = self.y}, 50, {r=128,g=128,b=128})
-    end
-    return o
-end
-
+---------------------
+-- Actual game logic
 
 objects = { }
+clickmode = 'idle' -- 'build_turret' etc.
 
 function update()
     for _,object in ipairs(objects) do
@@ -72,6 +73,30 @@ function draw()
     end
 end
 
-r = Rock:new()
-r.x, r.y = 100, 100
-table.insert(objects, r)
+require"units"
+
+function mouse_callback(but, pressed, x, y, status)
+	if but == iup.BUTTON3 and pressed==1 then clickmode = 'idle' end
+
+	local modemappings = {
+		build_harvester = Harvester,
+		build_energylink = EnergyLink,
+		build_solarplant = SolarPlant
+	}
+	if but == iup.BUTTON1 and pressed==1 then
+		if clickmode ~= 'idle' then
+			print ("building "..clickmode)
+			o = modemappings[clickmode]:new()
+			o.position.x, o.position.y = x,y
+			table.insert(objects, o)
+		end
+	end
+end
+
+function keyboard_callback(key)
+	if key == iup.K_r then clickmode = 'build_harvester' end
+	if key == iup.K_s then clickmode = 'build_solarplant' end
+	if key == iup.K_e then clickmode = 'build_energylink' end
+end
+
+
