@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>WebSocket Test</title>
+    <script src="lua.vm.js"></script>
+    <script type="text/lua">
+        alert = js.global.alert
+        print = js.global.writeToScreen
+
+        local socket
+        function run()
+            socket = js.global.createWebSocket("ws://localhost:8080/")
+            socket.onmessage = function(event)
+                print(event.data)
+            end
+            socket.onopen = function()
+                print("socket opened") 
+                --socket:send("lol")
+            end
+            socket.onclose = function() print("socket closed") end
+        end
+        js.global.run = run
+    </script>
+    <script type="text/javascript">
+        var wsUri = "ws://localhost:8080/";
+        var output;
+        function init() {
+            output = document.getElementById("output");
+            run();
+            //testWebSocket();
+        }
+        function createWebSocket(uri) { return new WebSocket(uri, "echo"); }
+        function testWebSocket() {
+            websocket = new WebSocket(wsUri, "echo");
+            websocket.onopen = function (evt) { onOpen(evt) };
+            websocket.onclose = function (evt) { onClose(evt) };
+            websocket.onmessage = function (evt) { onMessage(evt) };
+            websocket.onerror = function (evt) { onError(evt) };
+        }
+        function onOpen(evt) {
+            writeToScreen("CONNECTED");
+            doSend("WebSocket rocks");
+        }
+        function onClose(evt) {
+            writeToScreen("DISCONNECTED");
+        }
+        function onMessage(evt) {
+            writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
+            websocket.close();
+        }
+        function onError(evt) {
+            writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+        }
+        function doSend(message) {
+            writeToScreen("SENT: " + message); websocket.send(message);
+        }
+        function writeToScreen(message) {
+            var pre = document.createElement("p");
+            pre.style.wordWrap = "break-word";
+            pre.innerHTML = message;
+            output.appendChild(pre);
+        }
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body>
+    <h2>WebSocket Test</h2>
+    <div id="output"></div>
+</body>
+</html>
