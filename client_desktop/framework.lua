@@ -67,13 +67,13 @@ function cnv:action(x, y)
 end              
 
 function cnv:button_cb(but, pressed, x, y, status)
-	mouse_callback(but, pressed, x, y, status)
+    mouse_callback(but, pressed, x, y, status)
 end
 
 function cnv:k_any(c)
   if c == iup.K_q or c == iup.K_ESC then
     return iup.CLOSE
-	
+    
   end
   
   if c == iup.K_F1 then
@@ -161,14 +161,14 @@ cnv.rastersize = nil -- reset minimum limitation
 timer.run = "YES"
 
 function kvprint(x)
-	for k,v in pairs(x) do
-		print(k,v)
-	end
+    for k,v in pairs(x) do
+        print(k,v)
+    end
 end
 
 function start()
-	if (not iup.MainLoopLevel or iup.MainLoopLevel()==0) then
-  		iup.MainLoop()
-	end
+    if (not iup.MainLoopLevel or iup.MainLoopLevel()==0) then
+        iup.MainLoop()
+    end
 end
 start()

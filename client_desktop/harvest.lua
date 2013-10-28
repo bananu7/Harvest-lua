@@ -4,7 +4,7 @@ require "drawing"
 -- harvest game logic
 Actor = {
     id = nil,
-	energy = 0,
+    energy = 0,
     position = Point(0,0),
     kind = "actor", -- turret, rock, plant
 }
@@ -15,7 +15,7 @@ function Actor:new(o)
     self.__index = self
     
     o.id = lastActorId
-	o.position = Point(0,0)
+    o.position = Point(0,0)
     lastActorId = lastActorId + 1
     return o
 end
@@ -32,9 +32,9 @@ function update()
         object:update()
     end
     for _,object in pairs(objects) do
-       	if object.flaggedForDeletion then
-			objects[_] = nil
-		end
+        if object.flaggedForDeletion then
+            objects[_] = nil
+        end
     end
 end
 
@@ -47,52 +47,52 @@ end
 require"units"
 
 function mouse_callback(but, pressed, x, y, status)
-	if but == iup.BUTTON3 and pressed==1 then clickmode = 'idle' end
+    if but == iup.BUTTON3 and pressed==1 then clickmode = 'idle' end
 
-	local modemappings = {
-		build_harvester = Harvester,
-		build_energylink = EnergyLink,
-		build_solarplant = SolarPlant
-	}
-	if but == iup.BUTTON1 and pressed==1 then
-		if clickmode ~= 'idle' then
-			print ("building "..clickmode)
-			o = modemappings[clickmode]:new()
-			o.position.x, o.position.y = x,y
-			table.insert(objects, o)
-		end
-	end
+    local modemappings = {
+        build_harvester = Harvester,
+        build_energylink = EnergyLink,
+        build_solarplant = SolarPlant
+    }
+    if but == iup.BUTTON1 and pressed==1 then
+        if clickmode ~= 'idle' then
+            print ("building "..clickmode)
+            o = modemappings[clickmode]:new()
+            o.position.x, o.position.y = x,y
+            table.insert(objects, o)
+        end
+    end
 end
 
 function keyboard_callback(key)
-	if key == iup.K_r then clickmode = 'build_harvester' end
-	if key == iup.K_s then clickmode = 'build_solarplant' end
-	if key == iup.K_e then clickmode = 'build_energylink' end
+    if key == iup.K_r then clickmode = 'build_harvester' end
+    if key == iup.K_s then clickmode = 'build_solarplant' end
+    if key == iup.K_e then clickmode = 'build_energylink' end
 end
 
 function query(location, range, idFilter, kindFilter) 
-	local function icontains(table, elem)
-		for k,v in ipairs(table) do
-			if v == elem then
-				return true
-			end
-		end
-		return false
-	end
+    local function icontains(table, elem)
+        for k,v in ipairs(table) do
+            if v == elem then
+                return true
+            end
+        end
+        return false
+    end
 
-	kindFilter = kindFilter or { }
+    kindFilter = kindFilter or { }
 
-	local result = { }
-	for _,object in pairs(objects) do
-		if distance(object.position, location) <= range then
-			if object.id ~= i then
-				if icontains(kindFilter, object.kind) then
-					table.insert(result, object)
-				end
-			end
-		end
-	end
-	return result
+    local result = { }
+    for _,object in pairs(objects) do
+        if distance(object.position, location) <= range then
+            if object.id ~= i then
+                if icontains(kindFilter, object.kind) then
+                    table.insert(result, object)
+                end
+            end
+        end
+    end
+    return result
 end
 
 
