@@ -53,6 +53,7 @@ function mouse_callback(but, pressed, x, y, status)
         build_harvester = units.harvester,
         build_energylink = units.energy_link,
         build_solarplant = units.solar_plant,
+        build_rock = units.rock
     }
     if but == iup.BUTTON1 and pressed==1 then
         if clickmode ~= 'idle' then
@@ -65,9 +66,10 @@ function mouse_callback(but, pressed, x, y, status)
 end
 
 function keyboard_callback(key)
-    if key == iup.K_r then clickmode = 'build_harvester' end
+    if key == iup.K_h then clickmode = 'build_harvester' end
     if key == iup.K_s then clickmode = 'build_solarplant' end
     if key == iup.K_e then clickmode = 'build_energylink' end
+    if key == iup.K_r then clickmode = 'build_rock' end
 end
 
 function query(location, range, idFilter, kindFilter) 
