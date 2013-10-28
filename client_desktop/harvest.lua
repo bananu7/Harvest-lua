@@ -44,15 +44,15 @@ function draw()
     end
 end
 
-require"units"
+units = require"units"
 
 function mouse_callback(but, pressed, x, y, status)
     if but == iup.BUTTON3 and pressed==1 then clickmode = 'idle' end
 
     local modemappings = {
-        build_harvester = Harvester,
-        build_energylink = EnergyLink,
-        build_solarplant = SolarPlant
+        build_harvester = units.harvester,
+        build_energylink = units.energy_link,
+        build_solarplant = units.solar_plant,
     }
     if but == iup.BUTTON1 and pressed==1 then
         if clickmode ~= 'idle' then

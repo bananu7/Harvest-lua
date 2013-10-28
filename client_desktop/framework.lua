@@ -40,11 +40,11 @@ function cnv:resize_cb(width, height)
 
     gl.MatrixMode('PROJECTION')   -- Select The Projection Matrix
     gl.LoadIdentity()             -- Reset The Projection Matrix
-    
+
     if height == 0 then           -- Calculate The Aspect Ratio Of The Window
         height = 1
     end
-    
+
     --glu.Perspective(80, width / height, 1, 5000)
     gl.Ortho(0, width, height, 0, -1, 1)
 
@@ -56,15 +56,15 @@ function cnv:action(x, y)
   iup.GLMakeCurrent(self)
   gl.ClearColor(30/255,30/255,30/255,1)
   gl.Clear('COLOR_BUFFER_BIT,DEPTH_BUFFER_BIT') -- Clear Screen And Depth Buffer
-  
+
   gl.LoadIdentity()              -- Reset The Current Modelview Matrix
-  
+
   -- harvest draw function
   update()
   draw()
 
   iup.GLSwapBuffers(self)
-end              
+end
 
 function cnv:button_cb(but, pressed, x, y, status)
     mouse_callback(but, pressed, x, y, status)
@@ -73,9 +73,9 @@ end
 function cnv:k_any(c)
   if c == iup.K_q or c == iup.K_ESC then
     return iup.CLOSE
-    
+
   end
-  
+
   if c == iup.K_F1 then
     if fullscreen then
       fullscreen = false
@@ -96,15 +96,15 @@ end
     print ("Unnable to open the file: " .. fileName)
     os.exit()
   end
-  
+
   gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
-  
+
   return image
 end]]
 
 --[[function LoadGLTextures()
   texture = gl.GenTextures(3)   -- Create The Textures
-  
+
   -- Create Nearest Filtered Texture
   gl.BindTexture('TEXTURE_2D', texture[1])
   gl.TexParameter('TEXTURE_2D','TEXTURE_MIN_FILTER','NEAREST')
@@ -152,7 +152,7 @@ function cnv:map_cb()
 
   gl.Enable('LIGHT1')
 
-end              
+end
 
 dlg = iup.dialog{cnv; title="LuaGL Test Application 07"}
 
