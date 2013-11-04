@@ -92,7 +92,7 @@ var drawer = function() {
         
         enableBindings();
         
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, count);
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, count);
     }
     
     return {
