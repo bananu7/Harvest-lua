@@ -1,0 +1,76 @@
+<!doctype html>
+
+<html> 
+<head>
+<script type="text/javascript" src="webgl-utils.js"></script>
+<script type="text/javascript" src="gl-matrix-min.js"></script>
+<!-- my code -->
+<script type="text/javascript" src="drawer.js"></script>
+
+<script>
+    "use strict";
+// data
+var vertices = [
+    0.0, 0.5,
+    0.5,  -0.5,
+    -0.5, -0.5,
+];
+
+//variables
+var bgcolor = { r : 0.0, g : 0.0, b : 0.0, a : 1.0 };
+
+// opengl objects
+var gl; // opengl context
+var buffer; // main vertexbuffer
+
+// my drawer
+var drawer;
+
+function drawScene() {
+    "use strict";
+    gl.clearColor(bgcolor.r, bgcolor.g, bgcolor.b, bgcolor.a);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+}
+
+function start() {
+    "use strict";
+    var canvas = document.getElementById("mainCanvas");
+    gl = WebGLUtils.setupWebGL(canvas);
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.enable(gl.DEPTH_TEST);
+    
+    drawer.setup(gl);
+
+    tick();
+}
+
+function update() {
+    "use strict";
+    if (bgcolor.r < 1.0)
+        bgcolor.r += 0.01;
+    else
+        bgcolor.r = 0.0;
+}
+
+function tick() {
+    "use strict";
+    requestAnimFrame(tick);
+    drawScene();
+    
+    drawer.drawLine(-0.5, -0.5, 0.5, 0.5);
+    drawer.drawCircle(0.0, 0.0, 0.6);
+    
+    update();
+}
+
+window.onload = start;
+</script>
+</head>
+
+<body>
+
+<canvas width="500" height="500" id="mainCanvas"></canvas>
+
+</body>
+</html>
