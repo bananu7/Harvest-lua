@@ -4,10 +4,12 @@ var drawer = function() {
     var VBO;
     var gl; // gl state
     var shaderProgram; // main program
+    var viewMatrix; // main view matrix
     var vertCode =
         'attribute vec2 position;' +
+        'uniform mat4 viewMat;' +
         'void main(void) {' +
-        '  gl_Position = vec4(position, 0.0, 1.0);' +
+        '  gl_Position = viewMat * vec4(position, 0.0, 1.0);' +
         '}';
 
     var fragCode =
@@ -37,12 +39,21 @@ var drawer = function() {
         gl.linkProgram(shaderProgram);
         if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS))
             throw new Error(gl.getProgramInfoLog(shaderProgram));
+            
+            
+        gl.useProgram(shaderProgram);
+        
+        var viewMatrixLocation = gl.getUniformLocation(shaderProgram, "viewMat");
+        gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
     }
         
     var setup = function(glState) {
         gl = glState;
         VBO = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
+        
+        viewMatrix = mat4.create();
+        mat4.ortho(viewMatrix, 0, 500, 500, 0, -1, 1);
         
         initShaders();
     }
@@ -65,7 +76,7 @@ var drawer = function() {
     var drawLine = function(x1, y1, x2, y2) {
         var lineData = [x1, y1, x2, y2];
         gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STREAM_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lineData), gl.STREAM_DRAW);
         
         enableBindings();
         
@@ -74,9 +85,8 @@ var drawer = function() {
     
     var drawCircle = function(x, y, radius) {
         var circleData = [];
-        circleData.length = 0;
-        
-        var count = 8; //Math.min(8, radius);
+
+        var count = Math.max(8, radius/2);
         
         for (var i = 0; i < count; ++i) {
             var theta = (i / count) * Math.PI * 2.0;

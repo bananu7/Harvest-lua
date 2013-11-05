@@ -2,19 +2,21 @@
 
 <html> 
 <head>
+</head>
+<body>
+
+<script src="lua.vm.js"></script>
+
 <script type="text/javascript" src="webgl-utils.js"></script>
 <script type="text/javascript" src="gl-matrix-min.js"></script>
 <!-- my code -->
 <script type="text/javascript" src="drawer.js"></script>
+<!-- harvest logic code -->
+
+<!--script type="text/lua" src="client_desktop/harvest.lua"></script-->
 
 <script>
-    "use strict";
-// data
-var vertices = [
-    0.0, 0.5,
-    0.5,  -0.5,
-    -0.5, -0.5,
-];
+"use strict";
 
 //variables
 var bgcolor = { r : 0.0, g : 0.0, b : 0.0, a : 1.0 };
@@ -32,43 +34,99 @@ function drawScene() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 }
 
+function blockingXRequest(uri) {
+    var xhReq = new XMLHttpRequest();
+    xhReq.open("GET", uri, false);
+    xhReq.send(null);
+    var serverResponse = xhReq.responseText;
+    return serverResponse;
+}
+
+function nonBlockingXRequest(uri, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            cb(xhr.responseText);
+        }
+    }
+    xhr.open('GET', uri, true);
+    xhr.send(null);
+}
+
 function start() {
     "use strict";
+    //Lua.executeScripts();
+    //alert(serverResponse);
+    Lua.execute(//"package = { loaded = {} }" +
+                "require = function(name)" +
+                "    if not package.preload[name] then " +
+                "       local sourcePath = 'client_desktop/';" +
+                "       js.global.alert('loading '..sourcePath .. name .. '.lua' );" +
+                "       local source = js.global.blockingXRequest(sourcePath .. name .. '.lua');" +
+                "       js.global.alert('loading finished');"+
+                "       if not source then" +
+                "           error('Error getting file ' .. name);" +
+                "       end" +
+                //"    print(source);" +
+                // it uses the superfluous array to verify load state
+                // (the value returned by loadstring can be simply nil)
+                "       package.preload[name] = { loadstring(source)(); }" +
+                "    end" +
+                "    return package.preload[name][0];" +
+                "end"
+                )
+    
+    
+    /*Lua.execute("require = function(name)" +
+            "    local sourcePath = 'client_desktop/';" +
+            "    js.global.alert('loading '..sourcePath .. name .. '.lua' );" +
+            "    local file = nil; " +
+            "    js.global.nonBlockingXRequest(sourcePath .. name .. '.lua', function(source) " +
+            "        js.global.alert('loading finished');"+
+            "        print(source);" +
+            "        file = source;" +
+            "        js.global.alert(source[1]);" +
+            "    end);" +
+            //"    js.global.Lua.execute(source);" +
+            //"    dostring(source);" +
+            "end"
+            )*/
+
+                
+    Lua.execute(blockingXRequest("client_desktop/harvest.lua"));
+    
     var canvas = document.getElementById("mainCanvas");
     gl = WebGLUtils.setupWebGL(canvas);
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
-    
+
     drawer.setup(gl);
 
     tick();
 }
 
-function update() {
+/*function update() {
     "use strict";
     if (bgcolor.r < 1.0)
         bgcolor.r += 0.01;
     else
         bgcolor.r = 0.0;
-}
+}*/
 
 function tick() {
     "use strict";
     requestAnimFrame(tick);
     drawScene();
     
-    drawer.drawLine(-0.5, -0.5, 0.5, 0.5);
-    drawer.drawCircle(0.0, 0.0, 0.6);
+    drawer.drawLine(10, 10, 100, 100);
+    drawer.drawCircle(200, 200, 100);
     
-    update();
+    //update();
 }
 
 window.onload = start;
 </script>
-</head>
-
-<body>
 
 <canvas width="500" height="500" id="mainCanvas"></canvas>
 
