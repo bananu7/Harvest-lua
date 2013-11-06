@@ -97,13 +97,15 @@ function query(location, range, idFilter, kindFilter)
     return result
 end
 
+print ("in harvest.lua:")
+
+--for k,v in pairs(units) do print(k,v) end
+print(units)
+
 -- If run in browser environment
 if js then 
     --for k,v in pairs(_G) do js.global[k] = v end
     js.global.query = query
     js.global.draw = draw
-    js.global.units = units
     js.global.update = update
 end
-
-
